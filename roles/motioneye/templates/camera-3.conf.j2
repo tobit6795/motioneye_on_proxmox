@@ -1,0 +1,86 @@
+# @webcam_resolution 100
+# @upload_subfolders on
+# @upload_server 10.11.1.200
+# @enabled on
+# @network_server 
+# @motion_detection on
+# @upload_port 21
+# @upload_location /ftp/media
+# @preserve_movies 7
+# @network_username 
+# @upload_movie on
+# @id 3
+# @webcam_server_resize off
+# @upload_password q1w2e3r4#1995+
+# @manual_record off
+# @upload_method post
+# @upload_picture on
+# @working_schedule_type during
+# @network_password 
+# @upload_service ftp
+# @preserve_pictures 0
+# @storage_device custom-path
+# @manual_snapshots off
+# @network_share_name 
+# @upload_enabled on
+# @network_smb_ver 1.0
+# @working_schedule 00:00-23:30|00:00-23:30|00:00-23:30|00:00-23:30|00:00-23:30|00:00-23:30|00:00-23:30
+# @clean_cloud_enabled off
+# @upload_username hassio
+
+
+ffmpeg_output_movies on
+threshold_maximum 0
+netcam_userpass admin:auP43e
+stream_quality 85
+threshold 1999
+quality 85
+noise_level 31
+ffmpeg_output_debug_movies off
+smart_mask_speed 0
+pre_capture 10
+noise_tune on
+stream_maxrate 15
+netcam_url rtsp://10.11.0.205:554/cam/realmonitor?channel=1&subtype=1
+stream_localhost off
+ffmpeg_variable_bitrate 25
+ffmpeg_video_codec mp4
+text_changes off
+movie_filename %Y-%m-%d/%H-%M-%S
+movie_passthrough off
+event_gap 30
+auto_brightness off
+stream_port 8083
+rotate 0
+stream_auth_method 0
+threshold_tune on
+framerate 10
+emulate_motion off
+snapshot_filename 
+output_pictures off
+despeckle_filter 
+snapshot_interval 0
+minimum_motion_frames 20
+stream_motion 1
+target_dir /var/lib/motioneye/Camera3
+text_double on
+post_capture 10
+lightswitch 5
+stream_authentication homeassistant:
+output_debug_pictures off
+on_picture_save /usr/local/lib/python2.7/dist-packages/motioneye/scripts/relayevent.sh "/etc/motioneye/motioneye.conf" picture_save %t %f
+on_movie_end /usr/local/lib/python2.7/dist-packages/motioneye/scripts/relayevent.sh "/etc/motioneye/motioneye.conf" movie_end %t %f
+text_left 
+picture_filename 
+locate_motion_style redbox
+locate_motion_mode off
+netcam_keepalive off
+max_movie_time 30
+on_event_end /usr/local/lib/python2.7/dist-packages/motioneye/scripts/relayevent.sh "/etc/motioneye/motioneye.conf" stop %t
+text_right 
+on_event_start /usr/local/lib/python2.7/dist-packages/motioneye/scripts/relayevent.sh "/etc/motioneye/motioneye.conf" start %t; /usr/bin/python /usr/local/lib/python2.7/dist-packages/motioneye/meyectl.pyc sendmail -c /etc/motioneye/motioneye.conf 'smtp.gmail.com' '587' 'kem.adm9502@gmail.com' 'q1w2e3r4#2017+' 'True' 'kem.adm9502@gmail.com' 'georg-marina1990@gmx.de' 'motion_start' '%t' '%Y-%m-%dT%H:%M:%S' '0'
+camera_name Parkplatz
+netcam_tolerant_check on
+height 480
+mask_file 
+width 640

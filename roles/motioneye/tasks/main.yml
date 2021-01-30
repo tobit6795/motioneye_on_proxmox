@@ -34,9 +34,31 @@
     #creates: /etc/systemd/system/motioneye.service
     # TODO: Edit file, convert to python2, not 3
 
+- name: copy templates
+  template:
+    src: '{{ item }}.j2'
+    dest: '/etc/motioneye/{{ item }}'
+  loop:
+    - tasks.pickle
+    - motion.conf
+    - camera-3.conf
+    - motioneye.conf
+    - camera-4.conf
+    - camera-1.conf
+    - uploadservices.json
+    - camera-2.conf
+    - prefs.json
+  register: config
+
 - name: Start / Init MotionEye Daemon
   systemd:
     name: motioneye
     state: started
     enabled: yes
     daemon_reload: yes
+
+- name: restart MotionEye Daemon
+  systemd:
+    name: motioneye
+    state: restarted
+  when: config is changed
