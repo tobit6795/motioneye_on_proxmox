@@ -1,0 +1,42 @@
+- name: Install Motion and Dependencies
+  apt:
+    name: motion,ffmpeg,v4l-utils
+
+- name: Install Motioneye Dependencies
+  apt:
+    name: python-pip,python-dev,python-setuptools,curl,libssl-dev,libcurl4-openssl-dev,libjpeg-dev,libz-dev 
+
+- name: Install MotionEye
+  pip:
+    executable: /usr/bin/pip
+    name: motioneye
+
+- name: Prepare Configuration for MotionEye
+  file:
+    path: /etc/motioneye
+    state: directory
+
+- name: Copy Configuration
+  command:
+    cmd: cp /usr/local/share/motioneye/extra/motioneye.conf.sample /etc/motioneye/motioneye.conf
+    creates: /etc/motioneye/motioneye.conf
+
+- name: Prepare Media Directory
+  file:
+    path: /var/lib/motioneye
+    state: directory
+
+- name: Add init script
+  copy:
+    remote_src: yes
+    src: /usr/local/share/motioneye/extra/motioneye.systemd-unit-local 
+    dest: /etc/systemd/system/motioneye.service
+    #creates: /etc/systemd/system/motioneye.service
+    # TODO: Edit file, convert to python2, not 3
+
+- name: Start / Init MotionEye Daemon
+  systemd:
+    name: motioneye
+    state: started
+    enabled: yes
+    daemon_reload: yes

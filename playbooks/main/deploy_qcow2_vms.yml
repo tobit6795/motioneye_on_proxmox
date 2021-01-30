@@ -1,0 +1,85 @@
+---
+- hosts: proxmox_server
+  gather_facts: False
+  vars:
+    id_list:
+        - "{{ vm_id }}"
+    id_stg_list:
+        - { id: "{{ vm_id }}", stg: "{{ vm_stg }}" }
+  tasks:
+      - name: Including the variables.
+        include_vars:
+            file: ../../vars.yml
+
+      - name: Creating a resource pool.
+        shell: pvesh create /pools -poolid "{{ resource_pool }}" --Comment "{{ resource_pool }}"
+        ignore_errors: yes
+
+      - name: Downloading the Debian qcow2 image.
+        get_url:
+            url: "{{ qcow2_image }}"
+            dest: "{{ qcow2_download_location }}image.qcow2"
+
+      - name: Creating the VMs.
+        shell: >
+            qm create {{ item.id }}
+            --pool {{ resource_pool }}
+            --ostype "l26"
+            --name {{ item.hn }}
+            --description "{{ inventory_hostname }} VM"
+            --agent 1
+            --cores {{ item.cpu }}
+            --memory {{ item.mem }}
+            --net0 "virtio,bridge={{ item.bridge }}"
+            --ipconfig0 "gw={{ item.gw }},ip={{ item.ip }}{{ item.sn }}"
+            --nameserver {{ item.ns }}
+            --searchdomain {{ item.sd }}
+            --cipassword {{ password }}
+            --onboot 1
+            #--sshkeys {{ ssh_key }}
+        with_items:
+            - { id: "{{ vm_id }}", hn: "{{ vm_hn }}", cpu: "{{ vm_cpu }}", mem: "{{ vm_mem }}", bridge: "{{ vm_bridge }}", gw: "{{ vm_gw }}", ip: "{{ vm_ip }}", sn: "{{ vm_sn }}", ns: "{{ vm_ns }}", sd: "{{ vm_sd }}" }
+
+      - name: Setting the VLAN Tags for the VMs.
+        shell: >
+            qm set {{ item.id }}
+            --net0 "virtio,bridge={{ item.bridge }},tag={{ item.vlan }}"
+        with_items:
+            - { id: "{{ vm_id }}", bridge: "{{ vm_bridge }}", vlan: "{{ vm_vlan }}" }
+        when:
+            - vm_vlan is defined
+            - vm_vlan|length != 0
+
+      - name: Importing the qcow2 image as a disk.
+        shell: qm importdisk {{ item.id }} {{ qcow2_download_location }}image.qcow2 {{ item.stg }}
+        with_items: "{{ id_stg_list }}"
+
+      - name: Configuring the VM Hardware.
+        shell: qm set {{ item.id }}
+               --scsihw virtio-scsi-pci
+               --scsi0 {{ item.stg }}:vm-{{ item.id }}-disk-0
+               --ide2 {{ item.stg }}:cloudinit
+               --serial0 /dev/tty0
+               --boot c --bootdisk scsi0
+        with_items: "{{ id_stg_list }}"
+
+      - name: Resizing the disk.
+        shell: qm resize {{ item.id }} scsi0 {{ item.size }}
+        with_items:
+            - { id: "{{ vm_id }}", size: "{{ vm_size }}" }
+
+      - name: Starting the VMs.
+        shell: qm start {{ item }}
+        with_items: "{{ id_list }}"
+
+#      - name: Waiting for the VMs to become available.
+#        wait_for:
+#            host: "{{ item }}"
+#            port: 22
+#            msg: "VMs did not become available after 5 minutes. Network error?"
+#        with_items:
+#            - "{{ vm_hn }}"
+
+      - name: Waiting 2 minutes for for Debian to finish booting.
+        pause:
+            seconds: 60

@@ -1,0 +1,67 @@
+###############################################################################################
+#                                      -General Options-                                      #
+###############################################################################################
+# These parameters are required.                                                              #
+###############################################################################################
+
+# qcow2 image to use for your Virtual Machines:
+qcow2_image: 'https://cdimage.debian.org/cdimage/openstack/current-10/debian-10-openstack-amd64.qcow2'
+
+# Location to use for storing the qcow2 image. Be sure to end the absolute path with a '/'.
+qcow2_download_location: '/tmp/'
+
+# Resource Pool for your virtual machines.
+resource_pool: 'ar.kem-net.work'
+
+# Path to the SSH Public Key on your Proxmox Server.
+ssh_key: '/home/tokem/.ssh/id_rsa.pub'
+
+# root login password
+password: 'q1w2e3r4'
+
+# VM IDs
+vm_id: '1031'
+
+# Hostnames
+vm_hn: 'motioneye'
+
+# Number of CPUs
+vm_cpu: '2'
+
+# Amount of memory expressed in megabytes
+vm_mem: '2048'
+
+# Disk Sizes
+vm_size: '30G'
+
+# IP Addresses
+vm_ip: '10.10.0.26'
+
+# Subnet Sizes
+vm_sn: '/23'
+
+# Network Gateway
+vm_gw: '10.10.0.1'
+
+# DNS Servers
+vm_ns: '10.10.0.1'
+
+# Search Domains
+vm_sd: 'fritz.box'
+
+# Network Bridges
+vm_bridge: 'vmbr0'
+
+# Storage volumes
+vm_stg: 'local-lvm'
+
+###############################################################################################
+#                                        -VLAN Options-                                       #
+###############################################################################################
+# These parameters are only required if your network is configured with VLANs.                #
+# Leave these variables blank if you do not intend to use VLANs for your cluster.             #
+###############################################################################################
+
+# VLAN Tags
+vm_vlan: ''
+

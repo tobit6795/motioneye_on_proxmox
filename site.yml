@@ -1,0 +1,15 @@
+#!/usr/bin/env ansible-playbook
+
+- import_playbook: playbooks/optional/delete_all_resources.yml 
+  when: remove_vm|default(false)|bool == true  
+
+- import_playbook: playbooks/main/deploy_qcow2_vms.yml 
+  tags: proxmox
+
+- name: "Install motioneye"
+  hosts: motioneye 
+  vars:
+    motion_eye_webpasswd: "q1w2e3r4"
+  roles:
+    - motioneye
+  tags: motioneye
