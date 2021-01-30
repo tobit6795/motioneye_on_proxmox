@@ -10,6 +10,7 @@
   hosts: motioneye 
   vars:
     motion_eye_webpasswd: "q1w2e3r4"
+    motion_eye_port: 80
   roles:
     - motioneye
   tags: motioneye
